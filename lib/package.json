@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "vosk-browser",
   "version": "0.0.8",
   "description": "Kaldi in-browser speech recognition based on a WASM build of the Vosk library",

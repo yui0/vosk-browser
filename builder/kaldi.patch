@@ -1,21 +1,19 @@
-diff --git a/src/Makefile b/src/Makefile
-index 69aebdb26..bd66c91eb 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -41,7 +41,7 @@ KALDI_SONAME ?= libkaldi.so
- 
+diff -Nuarp kaldi.orig/src/Makefile kaldi/src/Makefile
+--- kaldi.orig/src/Makefile	2024-10-27 15:31:50.099818841 +0900
++++ kaldi/src/Makefile	2024-10-27 15:32:37.264878169 +0900
+@@ -42,7 +42,7 @@ KALDI_SONAME ?= libkaldi.so
  # Reset the default goal, so that the all target will become default
  .DEFAULT_GOAL :=
+ .PHONY: all mklibdir rmlibdir checkversion
 -all: $(SUBDIRS) matrix/test
 +all: $(SUBDIRS) #matrix/test
- 	-echo Done
+ 	@echo Done
  
- mklibdir:
-diff --git a/src/configure b/src/configure
-index c74d67af8..cf1f8cdd0 100755
---- a/src/configure
-+++ b/src/configure
-@@ -1022,6 +1022,34 @@ if $android ; then
+ ifneq ($(KALDILIBDIR), )
+diff -Nuarp kaldi.orig/src/configure kaldi/src/configure
+--- kaldi.orig/src/configure	2024-10-27 15:31:50.107818509 +0900
++++ kaldi/src/configure	2024-10-27 15:32:05.905163979 +0900
+@@ -1031,6 +1031,34 @@ if $android ; then
  
    echo "Successfully configured for Android with OpenBLAS from $OPENBLASROOT."
  
@@ -50,11 +48,10 @@ index c74d67af8..cf1f8cdd0 100755
  elif [ "`uname`" == "Darwin" ]; then
    # Check for Darwin first, because we later call uname -o (for Cygwin)
    # which crashes on Darwin.
-diff --git a/src/ivector/ivector-extractor.cc b/src/ivector/ivector-extractor.cc
-index c3a122281..1ad75599d 100644
---- a/src/ivector/ivector-extractor.cc
-+++ b/src/ivector/ivector-extractor.cc
-@@ -190,16 +190,10 @@ void IvectorExtractor::ComputeDerivedVars() {
+diff -Nuarp kaldi.orig/src/ivector/ivector-extractor.cc kaldi/src/ivector/ivector-extractor.cc
+--- kaldi.orig/src/ivector/ivector-extractor.cc	2024-10-27 15:31:50.148816804 +0900
++++ kaldi/src/ivector/ivector-extractor.cc	2024-10-27 15:32:05.905163979 +0900
+@@ -190,16 +190,10 @@ void IvectorExtractor::ComputeDerivedVar
    U_.Resize(NumGauss(), IvectorDim() * (IvectorDim() + 1) / 2);
    Sigma_inv_M_.resize(NumGauss());
  
@@ -75,10 +72,9 @@ index c3a122281..1ad75599d 100644
    }
    KALDI_LOG << "Done.";
  }
-diff --git a/src/makefiles/default_rules.mk b/src/makefiles/default_rules.mk
-index 3ae5ed5e2..cb56051af 100644
---- a/src/makefiles/default_rules.mk
-+++ b/src/makefiles/default_rules.mk
+diff -Nuarp kaldi.orig/src/makefiles/default_rules.mk kaldi/src/makefiles/default_rules.mk
+--- kaldi.orig/src/makefiles/default_rules.mk	2024-10-27 15:31:50.158816389 +0900
++++ kaldi/src/makefiles/default_rules.mk	2024-10-27 15:32:05.905163979 +0900
 @@ -1,5 +1,9 @@
  SHELL := /bin/bash
  
@@ -127,7 +123,7 @@ index 3ae5ed5e2..cb56051af 100644
  
  ifeq ($(KALDI_FLAVOR), dynamic)
  # the LIBFILE is not the same as $(LIBNAME).a
-@@ -87,11 +104,14 @@ endif
+@@ -91,11 +108,14 @@ endif
  %.a:
  	$(MAKE) -C ${@D} ${@F}
  
@@ -143,11 +139,9 @@ index 3ae5ed5e2..cb56051af 100644
  
  distclean: clean
  	-rm -f .depend.mk
-diff --git a/src/makefiles/wasm_clapack.mk b/src/makefiles/wasm_clapack.mk
-new file mode 100644
-index 000000000..fc10b9e9c
---- /dev/null
-+++ b/src/makefiles/wasm_clapack.mk
+diff -Nuarp kaldi.orig/src/makefiles/wasm_clapack.mk kaldi/src/makefiles/wasm_clapack.mk
+--- kaldi.orig/src/makefiles/wasm_clapack.mk	1970-01-01 09:00:00.000000000 +0900
++++ kaldi/src/makefiles/wasm_clapack.mk	2024-10-27 15:32:05.905163979 +0900
 @@ -0,0 +1,32 @@
 +# WebAssembly/CLAPACK configuration
 +
@@ -181,10 +175,9 @@ index 000000000..fc10b9e9c
 +
 +LDFLAGS = $(EXTRA_LDFLAGS) $(OPENFSTLDFLAGS) -g
 +LDLIBS = $(EXTRA_LDLIBS) $(OPENFSTLIBS) $(CLAPACKLIBS) -lm # -lpthread -ldl
-diff --git a/tools/Makefile b/tools/Makefile
-index 1ab7bbb8d..54113b5db 100644
---- a/tools/Makefile
-+++ b/tools/Makefile
+diff -Nuarp kaldi.orig/tools/Makefile kaldi/tools/Makefile
+--- kaldi.orig/tools/Makefile	2024-10-27 15:31:50.203814518 +0900
++++ kaldi/tools/Makefile	2024-10-27 15:32:05.905163979 +0900
 @@ -78,11 +78,12 @@ else ifeq ($(OS),Windows_NT)
    # This new OS path is confirmed working on Windows 10 / Cygwin64.
    openfst_add_CXXFLAGS = -g -O2 -Wa,-mbig-obj
@@ -199,10 +192,9 @@ index 1ab7bbb8d..54113b5db 100644
          autoreconf -i && \
  	./configure --prefix=`pwd` $(OPENFST_CONFIGURE) CXX="$(CXX)" \
  		CXXFLAGS="$(openfst_add_CXXFLAGS) $(CXXFLAGS)" \
-diff --git a/tools/extras/check_dependencies.sh b/tools/extras/check_dependencies.sh
-index 155a376b6..97d9b2ff9 100755
---- a/tools/extras/check_dependencies.sh
-+++ b/tools/extras/check_dependencies.sh
+diff -Nuarp kaldi.orig/tools/extras/check_dependencies.sh kaldi/tools/extras/check_dependencies.sh
+--- kaldi.orig/tools/extras/check_dependencies.sh	2024-10-27 15:31:50.203814518 +0900
++++ kaldi/tools/extras/check_dependencies.sh	2024-10-27 15:32:05.905163979 +0900
 @@ -59,12 +59,6 @@ case $compiler_ver_info in
      ;;
  esac
@@ -216,11 +208,9 @@ index 155a376b6..97d9b2ff9 100755
  for f in make automake autoconf patch grep bzip2 gzip unzip wget git sox; do
    if ! have $f; then
      echo "$0: $f is not installed."
-diff --git a/tools/openfst.patch b/tools/openfst.patch
-new file mode 100644
-index 000000000..3d016dc28
---- /dev/null
-+++ b/tools/openfst.patch
+diff -Nuarp kaldi.orig/tools/openfst.patch kaldi/tools/openfst.patch
+--- kaldi.orig/tools/openfst.patch	1970-01-01 09:00:00.000000000 +0900
++++ kaldi/tools/openfst.patch	2024-10-27 15:32:05.905163979 +0900
 @@ -0,0 +1,45 @@
 +diff --git a/configure.ac b/configure.ac
 +index 9ab8824..94ff482 100644

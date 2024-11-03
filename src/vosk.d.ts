@@ -3,9 +3,16 @@ export declare class Model {
   public delete(): void;
 }
 
+export declare class SpkModel {
+  constructor(path: string);
+  public delete(): void;
+}
+
 export declare class Recognizer {
   constructor(model: Model, sampleRate: number);
   constructor(model: Model, sampleRate: number, grammar: string);
+  constructor(model: Model, sampleRate: number, spkModel: SpkModel);
+  public SetSpkModel(spkModel: SpkModel): void;
   public SetWords(words: boolean): void;
   public AcceptWaveform(address: number, length: number): boolean;
   public Result(): string;

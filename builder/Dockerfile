@@ -11,8 +11,7 @@ RUN apt-get update \
     libc6-dev-i386
 
 WORKDIR /opt/kaldi
-RUN git clone -b vosk --single-branch https://github.com/alphacep/kaldi . && \
-    git checkout 6417ac1dece94783e80dfbac0148604685d27579
+RUN git clone -b vosk --single-branch https://github.com/alphacep/kaldi .
 ADD kaldi.patch /tmp
 RUN git apply -v /tmp/kaldi.patch
 

@@ -35,6 +35,15 @@ static Model *makeModel(const std::string &model_path) {
     }
 }
 
+static SpkModel *makeSpkModel(const std::string &model_path) {
+    try {
+        return new SpkModel(model_path.c_str());
+    } catch (std::exception &e) {
+        KALDI_ERR << "Exception in SpkModel ctor: " << e.what();
+        throw;
+    }
+}
+
 static Recognizer* makeRecognizerWithGrammar(Model *model, float sample_frequency, const std::string &grammar) {
     try {
         KALDI_VLOG(2) << "Creating model with grammar";
@@ -43,6 +52,22 @@ static Recognizer* makeRecognizerWithGrammar(Model *model, float sample_frequenc
         KALDI_ERR << "Exception in Recognizer ctor: " << e.what();
         throw;
     }
+}
+
+static Recognizer* makeRecognizerWithSpk(Model *model, float sample_frequency, SpkModel *spk_model) {
+    try {
+        KALDI_VLOG(2) << "Creating model with spk";
+        return new Recognizer(model, sample_frequency, spk_model);
+    } catch (std::exception &e) {
+        KALDI_ERR << "Exception in Recognizer ctor: " << e.what();
+        throw;
+    }
+}
+
+static void Recognizer_SetSpkModel(Recognizer &self, SpkModel *spk_model)
+{
+    KALDI_VLOG(2) << "Setting SpkModel";
+    self.SetSpkModel(spk_model);
 }
 
 static void Recognizer_SetWords(Recognizer &self, int words) {
@@ -95,13 +120,16 @@ EMSCRIPTEN_BINDINGS(vosk) {
         ;
 
     class_<SpkModel>("SpkModel")
-        .constructor<const char *>()
+        .constructor(&makeSpkModel, allow_raw_pointers())
         ;
 
     class_<Recognizer>("Recognizer")
         .constructor(&makeRecognizerWithGrammar, allow_raw_pointers())
         .constructor<Model *, float>(allow_raw_pointers())
+        //.constructor(&makeRecognizerWithSpk, allow_raw_pointers())
+        //.constructor<SpkModel *, float>(allow_raw_pointers())
         .function("SetWords", &Recognizer_SetWords)
+        .function("SetSpkModel", &Recognizer_SetSpkModel, allow_raw_pointers())
         .function("AcceptWaveform", &Recognizer_AcceptWaveform)
         .function("Result", &Recognizer_Result)
         .function("FinalResult", &Recognizer_FinalResult)
